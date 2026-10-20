@@ -46,6 +46,10 @@ struct TVRadioView: View {
     }
     var body: some View {
         shelfContent
+            .onAppear { ShelfPublisher.update(artwork: artwork) }
+            .onChange(of: scenePhase) { _, phase in
+                if phase != .active { ShelfPublisher.update(artwork: artwork) }
+            }
             .onReceive(artwork.$entries.debounce(for: .seconds(1), scheduler: RunLoop.main)) { _ in ShelfPublisher.update(artwork: artwork) }
             .onReceive(FavouriteStore.shared.$ids.debounce(for: .seconds(1), scheduler: RunLoop.main)) { _ in ShelfPublisher.update(artwork: artwork) }
             .onReceive(ListeningHistory.shared.$records.debounce(for: .seconds(1), scheduler: RunLoop.main)) { _ in ShelfPublisher.update(artwork: artwork) }
